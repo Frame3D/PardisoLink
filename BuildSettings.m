@@ -20,7 +20,7 @@ Switch[$OperatingSystem,
   "Unix", (* Compilation settings for Linux *)
   $buildSettings = {
 	"CompileOptions" -> {" -DMKL_ILP64"}
-	, "LinkerOptions"->{" -Wl,--no-as-needed -lmkl_intel_ilp64 -lmkl_intel_thread -lmkl_core -liomp5 -lpthread -lm -ldl"}
+	, "LinkerOptions"->{" -lmkl_intel_ilp64 -lmkl_intel_thread -lmkl_core -liomp5 -lpthread -lm -ldl"}
     , "IncludeDirectories" -> {}
     , "LibraryDirectories" -> {FileNameJoin[{$InstallationDirectory,"SystemFiles","Libraries",$SystemID}]}
   },
