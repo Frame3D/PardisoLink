@@ -1,0 +1,319 @@
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[         0,          0]
+NotebookDataLength[     11416,        318]
+NotebookOptionsPosition[     10506,        293]
+NotebookOutlinePosition[     10842,        308]
+CellTagsIndexPosition[     10799,        305]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell[BoxData["Exit"], "Input",
+ CellChangeTimes->{{3.7962718587115393`*^9, 3.79627185938859*^9}},
+ CellLabel->"In[2]:=",ExpressionUUID->"8eea5315-794a-4917-a221-0b180ead833e"],
+
+Cell[BoxData[
+ RowBox[{"Needs", "[", "\"\<PardisoLink`\>\"", "]"}]], "Input",
+ CellChangeTimes->{
+  3.796311089128434*^9, {3.7963144570292664`*^9, 3.796314457634741*^9}},
+ CellLabel->"In[1]:=",ExpressionUUID->"65e7fcd3-9276-4340-bd60-213c62aea5b4"],
+
+Cell["\<\
+A simple usage example for Pardiso. Just use it as if you were using \
+LinearSolve.\
+\>", "Text",
+ CellChangeTimes->{{3.796314434595799*^9, 
+  3.796314445074065*^9}},ExpressionUUID->"7b1e9092-05b0-4c95-ae42-\
+b446f1dd7624"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"n", "=", "1000000"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"m", "=", "20"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"L", "=", 
+   RowBox[{"SparseArray", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"Band", "[", 
+         RowBox[{"{", 
+          RowBox[{"1", ",", "1"}], "}"}], "]"}], "\[Rule]", 
+        RowBox[{
+         RowBox[{"-", "2."}], "n"}]}], ",", 
+       RowBox[{
+        RowBox[{"Band", "[", 
+         RowBox[{"{", 
+          RowBox[{"2", ",", "1"}], "}"}], "]"}], "\[Rule]", 
+        RowBox[{"1.", "n"}]}], ",", 
+       RowBox[{
+        RowBox[{"Band", "[", 
+         RowBox[{"{", 
+          RowBox[{"1", ",", "2"}], "}"}], "]"}], "\[Rule]", 
+        RowBox[{"1.", "n"}]}]}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"n", ",", "n"}], "}"}], ",", "0."}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"L", "\[LeftDoubleBracket]", 
+    RowBox[{"1", ",", "1"}], "\[RightDoubleBracket]"}], "=", "1."}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"L", "\[LeftDoubleBracket]", 
+    RowBox[{"1", ",", "2"}], "\[RightDoubleBracket]"}], "=", "0."}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"L", "\[LeftDoubleBracket]", 
+    RowBox[{
+     RowBox[{"-", "2"}], ",", "1"}], "\[RightDoubleBracket]"}], "=", "0."}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    RowBox[{"L", "\[LeftDoubleBracket]", 
+     RowBox[{"n", ",", "n"}], "\[RightDoubleBracket]"}], "=", "1."}], ";"}], 
+  "\[IndentingNewLine]", 
+  RowBox[{"(*", 
+   RowBox[{
+   "The", " ", "following", " ", "guarantees", " ", "that", " ", "L", " ", 
+    "is", " ", "CSR", " ", 
+    RowBox[{"conform", "."}]}], "*)"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"L", "=", 
+   RowBox[{"SparseArray", "[", "L", "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"b", "=", 
+   RowBox[{"ConstantArray", "[", 
+    RowBox[{
+     RowBox[{"1.", "/", "n"}], ",", "n"}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"B", "=", 
+   RowBox[{"RandomReal", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"-", "1"}], ",", "1"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"n", ",", "m"}], "}"}]}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    RowBox[{"b", "\[LeftDoubleBracket]", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"-", "1"}], ",", "1"}], "}"}], "\[RightDoubleBracket]"}], "=", 
+    
+    RowBox[{"{", 
+     RowBox[{"0.", ",", "0."}], "}"}]}], ";"}], 
+  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+ RowBox[{"\"\<Time for initialization + symbolic + numeric factorization\>\"",
+   "\[Rule]", 
+  RowBox[{"First", "@", 
+   RowBox[{"AbsoluteTiming", "[", 
+    RowBox[{
+     RowBox[{"P", "=", 
+      RowBox[{"Pardiso", "[", "L", "]"}]}], ";"}], 
+    "]"}]}]}], "\[IndentingNewLine]", 
+ RowBox[{"\"\<Time for solving a single linear system\>\"", "\[Rule]", 
+  RowBox[{"First", "@", 
+   RowBox[{"AbsoluteTiming", "[", 
+    RowBox[{
+     RowBox[{"x", "=", 
+      RowBox[{"P", "[", "b", "]"}]}], ";"}], "]"}]}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"\"\<Time for solving \>\"", "<>", 
+   RowBox[{"IntegerString", "[", "m", "]"}], "<>", 
+   "\"\< linear systems\>\""}], "\[Rule]", 
+  RowBox[{"First", "@", 
+   RowBox[{"AbsoluteTiming", "[", 
+    RowBox[{
+     RowBox[{"X", "=", 
+      RowBox[{"P", "[", "B", "]"}]}], ";"}], "]"}]}]}], "\[IndentingNewLine]", 
+ RowBox[{"\"\<Time for updating + numeric factorization\>\"", "\[Rule]", 
+  RowBox[{"First", "@", 
+   RowBox[{"AbsoluteTiming", "[", 
+    RowBox[{
+     RowBox[{"P", "[", 
+      RowBox[{"\"\<Update\>\"", "[", 
+       RowBox[{"-", "L"}], "]"}], "]"}], ";"}], 
+    "]"}]}]}], "\[IndentingNewLine]", 
+ RowBox[{"\"\<Time for solving a single linear system\>\"", "\[Rule]", 
+  RowBox[{"First", "@", 
+   RowBox[{"AbsoluteTiming", "[", 
+    RowBox[{
+     RowBox[{"y", "=", 
+      RowBox[{"P", "[", 
+       RowBox[{"-", "b"}], "]"}]}], ";"}], "]"}]}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"\"\<Time for solving \>\"", "<>", 
+    RowBox[{"IntegerString", "[", "m", "]"}], "<>", 
+    "\"\< linear systems\>\""}], "\[Rule]", 
+   RowBox[{"First", "@", 
+    RowBox[{"AbsoluteTiming", "[", 
+     RowBox[{
+      RowBox[{"Y", "=", 
+       RowBox[{"P", "[", 
+        RowBox[{"-", "B"}], "]"}]}], ";"}], "]"}]}]}], 
+  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+ RowBox[{"y", "\[Equal]", 
+  RowBox[{"-", "x"}]}]}], "Input",
+ CellChangeTimes->{{3.796311117585389*^9, 3.796311162509922*^9}, 
+   3.796311196766158*^9, {3.796311657739545*^9, 3.796311666780211*^9}, {
+   3.796311706315106*^9, 3.7963117226407948`*^9}, {3.796311766128592*^9, 
+   3.796311801109665*^9}, {3.796312242014256*^9, 3.796312260557959*^9}, {
+   3.796312329710865*^9, 3.796312390626123*^9}, {3.796312487225374*^9, 
+   3.7963127864332438`*^9}, {3.796313747848136*^9, 3.796313798614114*^9}, {
+   3.7963138350299673`*^9, 3.796313898009053*^9}, {3.796314000316785*^9, 
+   3.796314004027135*^9}, {3.79631405829116*^9, 3.796314071995529*^9}, {
+   3.7963141747351427`*^9, 3.796314189478444*^9}, {3.796314246390403*^9, 
+   3.796314268922442*^9}},
+ CellLabel->"In[2]:=",ExpressionUUID->"9b394f4f-a3c7-42df-8d74-a287e4b091e7"],
+
+Cell["\<\
+This is how you can use Pardiso in conjuction with the FEM backend of \
+NDSolveValue:\
+\>", "Text",
+ CellChangeTimes->{{3.7963141433419333`*^9, 
+  3.796314165269917*^9}},ExpressionUUID->"d0e42329-e092-423a-9b7d-\
+a5c87977bcc1"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"\[CapitalOmega]", "=", 
+    RowBox[{"DiscretizeRegion", "[", 
+     RowBox[{
+      RowBox[{"BoundaryMeshRegion", "[", "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"Map", "[", 
+         RowBox[{
+          RowBox[{"t", "\[Function]", 
+           RowBox[{
+            RowBox[{
+             RowBox[{"(", 
+              RowBox[{"2", "+", 
+               RowBox[{"Cos", "[", 
+                RowBox[{"5", " ", "t"}], "]"}]}], ")"}], "/", "3"}], " ", 
+            RowBox[{"{", 
+             RowBox[{
+              RowBox[{"Cos", "[", "t", "]"}], ",", 
+              RowBox[{"Sin", "[", "t", "]"}]}], "}"}]}]}], ",", 
+          RowBox[{"Most", "@", 
+           RowBox[{"Subdivide", "[", 
+            RowBox[{"0.", ",", 
+             RowBox[{"2.", " ", "Pi"}], ",", "2000"}], "]"}]}]}], "]"}], ",", 
+        
+        RowBox[{"Line", "[", 
+         RowBox[{"Partition", "[", 
+          RowBox[{
+           RowBox[{"Range", "[", "2000", "]"}], ",", "2", ",", "1", ",", 
+           "1"}], "]"}], "]"}]}], "\[IndentingNewLine]", "]"}], ",", 
+      "\[IndentingNewLine]", 
+      RowBox[{"MaxCellMeasure", "\[Rule]", 
+       RowBox[{"(", 
+        RowBox[{"1", "\[Rule]", "0.025"}], ")"}]}], ",", 
+      "\[IndentingNewLine]", 
+      RowBox[{"MeshQualityGoal", "\[Rule]", "\"\<Maximal\>\""}]}], 
+     "\[IndentingNewLine]", "]"}]}], ";"}], 
+  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"ClearAll", "[", 
+   RowBox[{"x", ",", "y"}], "]"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"f", "=", 
+   RowBox[{"NDSolveValue", "[", 
+    RowBox[{
+     RowBox[{"{", "\[IndentingNewLine]", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"Laplacian", "[", 
+         RowBox[{
+          RowBox[{"u", "[", 
+           RowBox[{"x", ",", "y"}], "]"}], ",", 
+          RowBox[{"{", 
+           RowBox[{"x", ",", "y"}], "}"}]}], "]"}], "\[Equal]", 
+        RowBox[{
+         RowBox[{"Sin", "[", 
+          RowBox[{
+           RowBox[{"3", " ", "Pi", " ", "x"}], "+", " ", 
+           RowBox[{"6", " ", "Pi", " ", "y"}]}], "]"}], "+", 
+         RowBox[{"2", 
+          RowBox[{"Sin", "[", 
+           RowBox[{
+            RowBox[{"7", " ", "Pi", " ", "x"}], "+", " ", 
+            RowBox[{"5", " ", "Pi", " ", "y"}]}], "]"}]}], "-", "1"}]}], ",", 
+       "\[IndentingNewLine]", 
+       RowBox[{"DirichletCondition", "[", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"u", "[", 
+           RowBox[{"x", ",", "y"}], "]"}], "\[Equal]", "0"}], ",", "True"}], 
+        "]"}]}], "\[IndentingNewLine]", "}"}], ",", "\[IndentingNewLine]", 
+     "u", ",", "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{"x", ",", "y"}], "}"}], "\[Element]", "\[CapitalOmega]"}], ",",
+      "\[IndentingNewLine]", 
+     RowBox[{"Method", "\[Rule]", 
+      RowBox[{"{", 
+       RowBox[{"\"\<PDEDiscretization\>\"", "\[Rule]", 
+        RowBox[{"{", 
+         RowBox[{"\"\<FiniteElement\>\"", ",", "\[IndentingNewLine]", 
+          RowBox[{"\"\<PDESolveOptions\>\"", "\[Rule]", 
+           RowBox[{"{", 
+            RowBox[{"\"\<LinearSolver\>\"", "\[Rule]", 
+             RowBox[{"{", "Pardiso", "}"}]}], "}"}]}]}], 
+         "\[IndentingNewLine]", "}"}]}], "\[IndentingNewLine]", "}"}]}]}], 
+    "\[IndentingNewLine]", "]"}]}], 
+  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+ RowBox[{"Plot3D", "[", 
+  RowBox[{
+   RowBox[{"f", "[", 
+    RowBox[{"x", ",", "y"}], "]"}], ",", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"x", ",", "y"}], "}"}], "\[Element]", "\[CapitalOmega]"}]}], 
+  "]"}]}], "Input",
+ CellChangeTimes->{{3.796312903532475*^9, 3.796312906475409*^9}, {
+  3.796313343041379*^9, 3.796313478768128*^9}, {3.796313516170455*^9, 
+  3.7963135878783207`*^9}, {3.796313645396491*^9, 3.796313711400126*^9}, {
+  3.7963140095476017`*^9, 
+  3.796314010532634*^9}},ExpressionUUID->"4ebb520d-6d78-4620-8c49-\
+e781875329b5"]
+},
+WindowSize->{1440, 855},
+WindowMargins->{{0, Automatic}, {Automatic, 0}},
+FrontEndVersion->"12.0 for Mac OS X x86 (64-bit) (April 8, 2019)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[400, 13, 175, 2, 41, "Input",ExpressionUUID->"8eea5315-794a-4917-a221-0b180ead833e"],
+Cell[578, 17, 248, 4, 41, "Input",ExpressionUUID->"65e7fcd3-9276-4340-bd60-213c62aea5b4"],
+Cell[829, 23, 233, 6, 53, "Text",ExpressionUUID->"7b1e9092-05b0-4c95-ae42-b446f1dd7624"],
+Cell[1065, 31, 5303, 148, 542, "Input",ExpressionUUID->"9b394f4f-a3c7-42df-8d74-a287e4b091e7"],
+Cell[6371, 181, 237, 6, 53, "Text",ExpressionUUID->"d0e42329-e092-423a-9b7d-a5c87977bcc1"],
+Cell[6611, 189, 3891, 102, 567, "Input",ExpressionUUID->"4ebb520d-6d78-4620-8c49-e781875329b5"]
+}
+]
+*)
+
