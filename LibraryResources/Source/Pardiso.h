@@ -4,14 +4,27 @@
 extern "C" void pardiso (void *, mint *, mint *, mint *, mint *, mint *, mreal *, mint *, mint *, mint *, mint *, mint *, mint *, mreal *, mreal *, mint *);
 class Pardiso
 {
-	mint i, n, nnz, nrhs, mtype, maxfct, mnum, phase, error, msglvl;
-    mint *ia, *ja, *perm;
-	mreal* a;
-	mint iparm[64];
-	void* pt[64];
-	mreal ddum;
-	mint idum;
-	mreal timestamp;
+    mint n =0;                      /* Length of matrix */
+    mint nnz =0;                    /* Number of nonzeroes */
+    mint nrhs =1;                   /* Number of right hand sides */
+    mint mtype =0;                  /* Matrix type */
+    mint mnum = 1;                  /* Which factorization to use */
+    mint error = 0;                 /* Error flag */
+    mint msglvl = 0;                /* Do not pint statistical information to file */
+    mint maxfct = 1;                /* Maximum number of numerical factorizations */
+    mint phase = 0;                 /* Phase of pardiso */
+    mint *perm = NULL;              /* Permutation */
+    mint *ia = NULL;                /* Row pointers */
+    mint *ja = NULL;                /* Column indices */
+	mreal* a = NULL;                /* Array of nonzero values */
+	mint iparm[64];                 /* Integer parameter array for controlling pardiso */
+
+	void* pt[64];                   /* Pointer used internally by pardiso to store its data */
+	mreal ddum;                     /* double dummy pointer */
+	mint idum;                      /* integer dummy pointer */
+	mreal timestamp = 0;            /* time stamp of the numerica factorization */
+
+    /* a couple of flags */
 	mint initialized = 0;
 	mint symfactorized = 0;
 	mint numfactorized = 0;
@@ -21,6 +34,7 @@ class Pardiso
 	;
 	Pardiso()
 	{
+        mint i;
         for ( i = 0; i < 64; i++ )
         {
             iparm[i] = 0;
@@ -60,6 +74,10 @@ class Pardiso
         {
             return mma::makeVector<mint>(n+1,ia);
         }
+        else
+        {
+            return mma::makeVector<mint>(0,ia);
+        }
 	}
 	mma::IntTensorRef ColumnIndices()
 	{
@@ -67,12 +85,20 @@ class Pardiso
         {
             return mma::makeVector<mint>(nnz,ja);
         }
+        else
+        {
+            return mma::makeVector<mint>(0,ja);
+        }
 	}
 	mma::RealTensorRef NonzeroValues()
 	{
         if(a)
         {
             return mma::makeVector<mreal>(nnz,a);
+        }
+        else
+        {
+            return mma::makeVector<mreal>(0,a);
         }
 	}
 	mreal TimeStamp()
@@ -109,55 +135,53 @@ class Pardiso
         {
             return mma::makeVector<mint>(n,perm);
         }
+        else
+        {
+            return mma::makeVector<mint>(0,perm);
+        }
 	}
 	void Init(mma::IntTensorRef ia0, mma::IntTensorRef ja0, mma::RealTensorRef a0, mint mtype0)
 	{
         if(!initialized)
         {
+            mint i;
             mtype = mtype0;
-
-            //pardisoinit(pt,&mtype,iparm);
-
             nrhs = 1;
             timestamp = 0.;
             n = ia0.length()-1;
             nnz = ia0[ia0.length()-1]-1;
             ia = (mint*) malloc(ia0.length()*sizeof(mint));
+            mint anyerror = 0;
             if(!ia)
             {
                 mma::print("Allocation of ia failed.");
-                error -100001;
+                anyerror = 1;
             }
             std::copy(ia0.data(),ia0.data()+ia0.length(),ia);
             ja = (mint*) malloc(ja0.length()*sizeof(mint));
             if(!ja)
             {
                 mma::print("Allocation of ja failed.");
-                error -100002;
+                anyerror = 1;
             }
             std::copy(ja0.data(),ja0.data()+ja0.length(),ja);
             a = (mreal*) malloc(a0.length()*sizeof(mreal));
             if(!a)
             {
                 mma::print("Allocation of a failed.");
-                error -100003;
+                anyerror = 1;
             }
             std::copy(a0.data(),a0.data()+a0.length(),a);
             perm = (mint*) malloc(n*sizeof(mint));
             if(!perm)
             {
                 mma::print("Allocation of perm failed.");
-                error -100004;
+                anyerror = 1;
             }
             for ( i = 0; i < n; i++ )
             {
                 perm[i] = i+1;
             }
-
-            maxfct = 1;                 /* Maximum number of numerical factorizations. */
-            mnum = 1;                   /* Which factorization to use. */
-            msglvl = 0;                 /* Print statistical information in file */
-            error = 0;                  /* Initialize error flag */
 
             iparm[0] = 1;               /* No solver default */
             iparm[1] = 3;               /* parallel version of nested disection */
@@ -188,7 +212,7 @@ class Pardiso
             iparm[20] = 1;              /* Bunch-Kaufman pivoting */
             iparm[34] = 0;              /* 1-based indexing */
 
-            if(error==0)
+            if(anyerror==0)
             {
                 //mma::print("Initialization done.");
                 initialized = 1;
