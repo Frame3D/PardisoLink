@@ -207,7 +207,7 @@ class Pardiso
                 iparm[12] = 1;          /* Enable matching. Default for nonsymmetric matrices. Good for indefinite symmetric matrices */
             }
             iparm[17] = -1;             /* Report number of nonzeros in the factor LU */
-            iparm[18] = -1;             /* Report Mflops for LU factorization */
+            iparm[18] = 0;              /* Do not compute Mflops for LU factorization (because it is not for free) */
 
             iparm[20] = 1;              /* Bunch-Kaufman pivoting */
             iparm[34] = 0;              /* 1-based indexing */
@@ -314,7 +314,7 @@ class Pardiso
         }
 		return error;
 	}
-	mma::RealTensorRef LinearSolve(mma::RealTensorRef b, mint nrhs0, mint mode)
+	mma::RealTensorRef LinearSolve(mma::RealTensorRef b, mint mode)
 	{
 		if(!numfactorized)
 		{
@@ -323,7 +323,7 @@ class Pardiso
 		auto x = mma::makeVector<mreal>(b.length());
 		phase = 33;
 		iparm[11] = mode;
-		nrhs = nrhs0;
+		nrhs = 1;
 		pardiso (pt, &maxfct, &mnum, &mtype, &phase, &n, a, ia, ja, perm, &nrhs, iparm, &msglvl, b.data(), x.data(), &error);
 		if(error!=0)
 		{
@@ -333,6 +333,26 @@ class Pardiso
 		iparm[11] = 0;
 		return x;
 	}
+
+    mma::RealTensorRef LinearSolveMatrix(mma::RealMatrixRef B, mint mode)
+    {
+        if(!numfactorized)
+        {
+            FactorizeNumerically();
+        }
+        auto X = mma::makeMatrix<mreal>(B.rows(),B.cols());
+        phase = 33;
+        iparm[11] = mode;
+        nrhs = B.rows();
+        pardiso (pt, &maxfct, &mnum, &mtype, &phase, &n, a, ia, ja, perm, &nrhs, iparm, &msglvl, B.data(), X.data(), &error);
+        if(error!=0)
+        {
+            mma::print("Pardiso reported an error in solving phase.");
+        }
+        nrhs = 1;
+        iparm[11] = 0;
+        return X;
+    }
 	
 	protected:
 	;

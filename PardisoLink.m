@@ -48,7 +48,7 @@ $packageDirectory  = DirectoryName[$InputFileName];
 $libraryDirectory  = FileNameJoin[{$packageDirectory, "LibraryResources", $SystemID}];
 $sourceDirectory   = FileNameJoin[{$packageDirectory, "LibraryResources", "Source"}];
 
-Print["This is the package Pardiso installed at:"];
+Print["This is the package PardisoLink` installed at:"];
 Print["\t",$packageDirectory];
 
 $buildSettings     = Get[FileNameJoin[{$packageDirectory, "BuildSettings.m"}]];
@@ -83,7 +83,8 @@ template = LTemplate["Pardiso",
 			LFun["SetPermutations",{{Integer,1,"Constant"}},Integer],
 			LFun["FactorizeSymbolically",{},Integer],
 			LFun["FactorizeNumerically",{},Integer],
-			LFun["LinearSolve",{{Real,1,"Constant"},Integer,Integer},{Real,1}]
+			LFun["LinearSolve",{{Real,1,"Constant"},Integer},{Real,1}],
+			LFun["LinearSolveMatrix",{{Real,2,"Constant"},Integer},{Real,2}]
 		}]
 	}
 ];
@@ -169,7 +170,7 @@ Pardiso[A0_SparseArray, OptionsPattern[{
 	If[ Developer`PackedArrayQ[a,Real],
 		P["Init"[A["RowPointers"] + 1, Flatten[A["ColumnIndices"]],a,mtype]];
 		,
-		Message[Pardiso::unreal]
+		Message[Pardiso::unreal];
 	]; 
 	iparm = OptionValue["IntegerParameters"]; 
 	If[VectorQ[iparm], P["SetIntegerParameters"[iparm]]; ];
@@ -189,25 +190,63 @@ Pardiso[A0_SparseArray, OptionsPattern[{
 
 Pardiso[(A0_)?MatrixQ] := Pardiso[Sparsify[A0]];
 
-Pardiso /: (P_Pardiso)[(b_)?VectorQ] := If[Length[b] != P["Length"[]], Message[Pardiso::vecdim, Length[b], P["Length"[]]]; Abort[], With[{x = P["LinearSolve"[Normal[b], 1, 0]]}, If[P["Error"[]] =!= 0, Print["Pardiso error in P_Pardiso[b_?VectorQ,\"\"]. Error code = ", P["Error"[]]]]; x]];
+Pardiso /: (P_Pardiso)[b0_?VectorQ, modestr_String:"N"] := Module[{mode,postproc,b,x},
+	b=Developer`ToPackedArray[N[b0]];
+	If[!Developer`PackedArrayQ[b,Real],
+		Message[Pardiso::unreal];
+		x = $Failed;
+	,
+		If[Length[b] != P["Length"[]],
+			Message[Pardiso::vecdim, Length[b], P["Length"[]]]; 
+			x = $Failed;
+		, 
+			mode=modestr/.{"N"->0,"T"->2,"C"->1,"J"->0};
+			postproc=If[modestr==="J",Conjugate,Identity];
+			x = postproc[P["LinearSolve"[b, mode]]];
+			If[P["Error"[]] =!= 0, 
+				Print["Pardiso error in P_Pardiso[b_?VectorQ,",modestr,"]. Error code = ", P["Error"[]]]
+			];
+		];
+	];
+	x
+];
 
-Pardiso /: (P_Pardiso)[(b_)?VectorQ, "N"] := If[Length[b] != P["Length"[]], Message[Pardiso::vecdim, Length[b], P["Length"[]]]; Abort[], With[{x = P["LinearSolve"[Normal[b], 1, 0]]}, If[P["Error"[]] =!= 0, Print["Pardiso error in P_Pardiso[b_?VectorQ,\"N\"]. Error code = ", P["Error"[]]]]; x]];
-
-Pardiso /: (P_Pardiso)[(b_)?VectorQ, "T"] := If[Length[b] != P["Length"[]], Message[Pardiso::vecdim, Length[b], P["Length"[]]]; Abort[], With[{x = P["LinearSolve"[Normal[b], 1, 2]]}, If[P["Error"[]] =!= 0, Print["Pardiso error in P_Pardiso[b_?VectorQ,\"T\"]. Error code = ", P["Error"[]]]]; x]];
-
-Pardiso /: (P_Pardiso)[(b_)?VectorQ, "C"] := If[Length[b] != P["Length"[]], Message[Pardiso::vecdim, Length[b], P["Length"[]]]; Abort[], P["LinearSolve"[Normal[b], 1, 1]]];
-
-Pardiso /: (P_Pardiso)[(b_)?VectorQ, "J"] := If[Length[b] != P["Length"[]], Message[Pardiso::vecdim, Length[b], P["Length"[]]]; Abort[], Conjugate[P["LinearSolve"[Normal[b], 1, 0]]]];
-
-Pardiso /: (P_Pardiso)[(B_)?MatrixQ] := If[Length[B] != P["Length"[]], Message[Pardiso::matdim, Length[B], P["Length"[]]]; Abort[], Transpose[Partition[P["LinearSolve"[Flatten[Normal[Transpose[B]]], Dimensions[B][[2]], 0]], Dimensions[B][[1]]]]];
-
-Pardiso /: (P_Pardiso)[(B_)?MatrixQ, "N"] := If[Length[B] != P["Length"[]], Message[Pardiso::matdim, Length[B], P["Length"[]]]; Abort[], Transpose[Partition[P["LinearSolve"[Flatten[Normal[Transpose[B]]], Dimensions[B][[2]], 0]], Dimensions[B][[1]]]]];
-
-Pardiso /: (P_Pardiso)[(B_)?MatrixQ, "T"] := If[Length[B] != P["Length"[]], Message[Pardiso::matdim, Length[B], P["Length"[]]]; Abort[], Transpose[Partition[P["LinearSolve"[Flatten[Normal[Transpose[B]]], Dimensions[B][[2]], 2]], Dimensions[B][[1]]]]];
-
-Pardiso /: (P_Pardiso)[(B_)?MatrixQ, "C"] := If[Length[B] != P["Length"[]], Message[Pardiso::matdim, Length[B], P["Length"[]]]; Abort[], Transpose[Partition[P["LinearSolve"[Flatten[Normal[Transpose[B]]], Dimensions[B][[2]], 1]], Dimensions[B][[1]]]]];
-
-Pardiso /: (P_Pardiso)[(B_)?MatrixQ, "J"] := If[Length[B] != P["Length"[]], Message[Pardiso::matdim, Length[B], P["Length"[]]]; Abort[], Transpose[Partition[P["LinearSolve"[Flatten[Normal[Transpose[B]]], Dimensions[B][[2]], 0]], Dimensions[B][[1]]]]];
+Pardiso /: (P_Pardiso)[B0_?MatrixQ, modestr_String:"N",side:(Left|Right):Left] :=Module[{mode,postproc,B,X,nrhs,n},
+	B=Developer`ToPackedArray[Normal[B0]];
+	If[!Developer`PackedArrayQ[B,Real],
+		Message[Pardiso::unreal];
+		X = $Failed
+	,
+		X = Switch[side
+		, Right
+			,
+			{nrhs,n}=Dimensions[B];
+			If[n != P["Length"[]], 
+				Message[Pardiso::matdim, n, P["Length"[]]]; 
+				$Failed
+			, 
+				mode=modestr/.{"N"->2,"T"->0,"C"->0,"J"->1};
+				postproc=If[modestr==="C",Conjugate,Identity];
+				postproc[P["LinearSolveMatrix"[B, mode]]]
+			]
+		, Left
+			,
+			{n,nrhs}=Dimensions[B];
+			If[n != P["Length"[]], 
+				Message[Pardiso::matdim, n, P["Length"[]]]; 
+				$Failed
+			, 
+				mode=modestr/.{"N"->0,"T"->2,"C"->1,"J"->0};
+				postproc=If[modestr==="J",ConjugateTranspose,Transpose];
+				postproc[P["LinearSolveMatrix"[Transpose[B], mode]]]
+			]
+		];
+		If[P["Error"[]] =!= 0,
+			Print["Pardiso error in P_Pardiso[B_?MatrixQ,",modestr,",",side,"]. Error code = ", P["Error"[]]];
+		];
+	];
+	X
+];
 
 Pardiso /: P_Pardiso["Update"[A0_SparseArray]] := Module[{n, A}, 
 	n = P["Length"[]];
@@ -226,9 +265,9 @@ Pardiso /: P_Pardiso["Update"[A0_SparseArray]] := Module[{n, A},
 		];
 		If[P["CheckMatrixQ"[]]=!=0&&(!SparseArray`SparseArraySortedQ[A]),
 			Message[Pardiso::unsorted];
-			A= SparseArray`SparseArraySort[N@A];
+			A= SparseArray`SparseArraySort[A];
 		];
-		P["Update"[Developer`ToPackedArray]]
+		P["Update"[A["NonzeroValues"]]];
 	]; 
 ];
 
@@ -237,12 +276,12 @@ Pardiso /: P_Pardiso["Update"[a0_?VectorQ]] := Module[{nnz,a},
 	If[Length[a0] =!= nnz, 
 		Message[PardisoUpdate::nnz, Length[a], nnz];
 	, 
-		a= Developer`ToPackedArrayQ[N[a0]];
+		a= Developer`ToPackedArray[N[a0]];
 		If[!Developer`PackedArrayQ[a,Real],
 			Message[Pardiso::unreal];
 		,
 			P["SetNonzeroValues"[a]]; 
-			P["FactorizeNumerically"]; 
+			P["FactorizeNumerically"[]]; 
 			If[P["Error"[]] =!= 0, Print["Pardiso error in FactorizeSymbolically. Error code =", P["Error"[]]]];
 			P["SetTimeStamp"[AbsoluteTime[]]]
 		]; 

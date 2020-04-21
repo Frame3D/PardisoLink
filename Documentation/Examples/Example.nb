@@ -3,17 +3,17 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[         0,          0]
-NotebookDataLength[     11416,        318]
-NotebookOptionsPosition[     10506,        293]
-NotebookOutlinePosition[     10842,        308]
-CellTagsIndexPosition[     10799,        305]
+NotebookDataLength[     24803,        616]
+NotebookOptionsPosition[     22942,        581]
+NotebookOutlinePosition[     23278,        596]
+CellTagsIndexPosition[     23235,        593]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
 Notebook[{
 Cell[BoxData["Exit"], "Input",
  CellChangeTimes->{{3.7962718587115393`*^9, 3.79627185938859*^9}},
- CellLabel->"In[2]:=",ExpressionUUID->"8eea5315-794a-4917-a221-0b180ead833e"],
+ CellLabel->"In[50]:=",ExpressionUUID->"8eea5315-794a-4917-a221-0b180ead833e"],
 
 Cell[BoxData[
  RowBox[{"Needs", "[", "\"\<PardisoLink`\>\"", "]"}]], "Input",
@@ -23,17 +23,20 @@ Cell[BoxData[
 
 Cell["\<\
 A simple usage example for Pardiso. Just use it as if you were using \
-LinearSolve.\
+LinearSolve.
+Here is a simple example featuring the finite element Laplacian with \
+homogeneous Dirichlet boundary conditions on the unit interval.\
 \>", "Text",
- CellChangeTimes->{{3.796314434595799*^9, 
-  3.796314445074065*^9}},ExpressionUUID->"7b1e9092-05b0-4c95-ae42-\
-b446f1dd7624"],
+ CellChangeTimes->{{3.7964498700302067`*^9, 3.79644990930877*^9}, {
+  3.796450520326201*^9, 
+  3.796450520461182*^9}},ExpressionUUID->"588c6e73-84c3-489e-a8a7-\
+c26d8e67d9b0"],
 
 Cell[BoxData[{
  RowBox[{
-  RowBox[{"n", "=", "1000000"}], ";"}], "\[IndentingNewLine]", 
+  RowBox[{"n", "=", "100000"}], ";"}], "\[IndentingNewLine]", 
  RowBox[{
-  RowBox[{"m", "=", "20"}], ";"}], "\[IndentingNewLine]", 
+  RowBox[{"m", "=", "100"}], ";"}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{"L", "=", 
    RowBox[{"SparseArray", "[", 
@@ -106,67 +109,12 @@ Cell[BoxData[{
       RowBox[{"n", ",", "m"}], "}"}]}], "]"}]}], ";"}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{
-   RowBox[{
-    RowBox[{"b", "\[LeftDoubleBracket]", 
-     RowBox[{"{", 
-      RowBox[{
-       RowBox[{"-", "1"}], ",", "1"}], "}"}], "\[RightDoubleBracket]"}], "=", 
-    
+   RowBox[{"b", "\[LeftDoubleBracket]", 
     RowBox[{"{", 
-     RowBox[{"0.", ",", "0."}], "}"}]}], ";"}], 
-  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
- RowBox[{"\"\<Time for initialization + symbolic + numeric factorization\>\"",
-   "\[Rule]", 
-  RowBox[{"First", "@", 
-   RowBox[{"AbsoluteTiming", "[", 
-    RowBox[{
-     RowBox[{"P", "=", 
-      RowBox[{"Pardiso", "[", "L", "]"}]}], ";"}], 
-    "]"}]}]}], "\[IndentingNewLine]", 
- RowBox[{"\"\<Time for solving a single linear system\>\"", "\[Rule]", 
-  RowBox[{"First", "@", 
-   RowBox[{"AbsoluteTiming", "[", 
-    RowBox[{
-     RowBox[{"x", "=", 
-      RowBox[{"P", "[", "b", "]"}]}], ";"}], "]"}]}]}], "\[IndentingNewLine]", 
- RowBox[{
-  RowBox[{"\"\<Time for solving \>\"", "<>", 
-   RowBox[{"IntegerString", "[", "m", "]"}], "<>", 
-   "\"\< linear systems\>\""}], "\[Rule]", 
-  RowBox[{"First", "@", 
-   RowBox[{"AbsoluteTiming", "[", 
-    RowBox[{
-     RowBox[{"X", "=", 
-      RowBox[{"P", "[", "B", "]"}]}], ";"}], "]"}]}]}], "\[IndentingNewLine]", 
- RowBox[{"\"\<Time for updating + numeric factorization\>\"", "\[Rule]", 
-  RowBox[{"First", "@", 
-   RowBox[{"AbsoluteTiming", "[", 
-    RowBox[{
-     RowBox[{"P", "[", 
-      RowBox[{"\"\<Update\>\"", "[", 
-       RowBox[{"-", "L"}], "]"}], "]"}], ";"}], 
-    "]"}]}]}], "\[IndentingNewLine]", 
- RowBox[{"\"\<Time for solving a single linear system\>\"", "\[Rule]", 
-  RowBox[{"First", "@", 
-   RowBox[{"AbsoluteTiming", "[", 
-    RowBox[{
-     RowBox[{"y", "=", 
-      RowBox[{"P", "[", 
-       RowBox[{"-", "b"}], "]"}]}], ";"}], "]"}]}]}], "\[IndentingNewLine]", 
- RowBox[{
-  RowBox[{
-   RowBox[{"\"\<Time for solving \>\"", "<>", 
-    RowBox[{"IntegerString", "[", "m", "]"}], "<>", 
-    "\"\< linear systems\>\""}], "\[Rule]", 
-   RowBox[{"First", "@", 
-    RowBox[{"AbsoluteTiming", "[", 
      RowBox[{
-      RowBox[{"Y", "=", 
-       RowBox[{"P", "[", 
-        RowBox[{"-", "B"}], "]"}]}], ";"}], "]"}]}]}], 
-  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
- RowBox[{"y", "\[Equal]", 
-  RowBox[{"-", "x"}]}]}], "Input",
+      RowBox[{"-", "1"}], ",", "1"}], "}"}], "\[RightDoubleBracket]"}], "=", 
+   RowBox[{"{", 
+    RowBox[{"0.", ",", "0."}], "}"}]}], ";"}]}], "Input",
  CellChangeTimes->{{3.796311117585389*^9, 3.796311162509922*^9}, 
    3.796311196766158*^9, {3.796311657739545*^9, 3.796311666780211*^9}, {
    3.796311706315106*^9, 3.7963117226407948`*^9}, {3.796311766128592*^9, 
@@ -176,15 +124,356 @@ Cell[BoxData[{
    3.7963138350299673`*^9, 3.796313898009053*^9}, {3.796314000316785*^9, 
    3.796314004027135*^9}, {3.79631405829116*^9, 3.796314071995529*^9}, {
    3.7963141747351427`*^9, 3.796314189478444*^9}, {3.796314246390403*^9, 
-   3.796314268922442*^9}},
+   3.796314268922442*^9}, {3.796440702106739*^9, 3.7964407026138067`*^9}, {
+   3.796440984594099*^9, 3.796441016390213*^9}, {3.796441328436769*^9, 
+   3.796441355202969*^9}, {3.796441726435809*^9, 3.7964417266367893`*^9}, {
+   3.796441798140275*^9, 3.796441827470436*^9}, {3.7964418672869987`*^9, 
+   3.7964419002679033`*^9}, 3.7964428198375587`*^9, 3.796442874291934*^9, {
+   3.7964448097148113`*^9, 3.7964448536252213`*^9}, 3.796445223500059*^9, 
+   3.796446077371128*^9, 3.796448815495027*^9, 3.7964498618413887`*^9, 
+   3.7964510712826138`*^9},
  CellLabel->"In[2]:=",ExpressionUUID->"9b394f4f-a3c7-42df-8d74-a287e4b091e7"],
 
+Cell["Now we can start solving:", "Text",
+ CellChangeTimes->{{3.7964487011363792`*^9, 
+  3.7964487065929213`*^9}},ExpressionUUID->"ddb921e3-b485-4c06-97de-\
+33ac537e8097"],
+
+Cell[BoxData[
+ RowBox[{"Dataset", "[", 
+  RowBox[{"Association", "[", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{
+    "\"\<Time for initialization + symbolic + numeric factorization\>\"", 
+     "\[Rule]", 
+     RowBox[{"First", "@", 
+      RowBox[{"AbsoluteTiming", "[", 
+       RowBox[{
+        RowBox[{"P", "=", 
+         RowBox[{"Pardiso", "[", 
+          RowBox[{"L", ",", 
+           RowBox[{"\"\<CheckMatrix\>\"", "\[Rule]", "False"}]}], "]"}]}], 
+        ";"}], "]"}]}]}], ",", "\[IndentingNewLine]", 
+    RowBox[{
+    "\"\<Time for solving a single linear system L.x == b\>\"", "\[Rule]", 
+     RowBox[{"First", "@", 
+      RowBox[{"AbsoluteTiming", "[", 
+       RowBox[{
+        RowBox[{"x", "=", 
+         RowBox[{"P", "[", 
+          RowBox[{"b", ",", "\"\<N\>\""}], "]"}]}], ";"}], "]"}]}]}], ",", 
+    "\[IndentingNewLine]", 
+    RowBox[{"\"\<Residual (L.x-b)\>\"", "\[Rule]", 
+     RowBox[{"Max", "[", 
+      RowBox[{"Abs", "[", 
+       RowBox[{
+        RowBox[{"L", ".", "x"}], "-", "b"}], "]"}], "]"}]}], ",", 
+    "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"\"\<Time for solving \>\"", "<>", 
+      RowBox[{"IntegerString", "[", "m", "]"}], "<>", 
+      "\"\< linear systems (L.X == B)\>\""}], "\[Rule]", 
+     RowBox[{"First", "@", 
+      RowBox[{"AbsoluteTiming", "[", 
+       RowBox[{
+        RowBox[{"X", "=", 
+         RowBox[{"P", "[", "B", "]"}]}], ";"}], "]"}]}]}], ",", 
+    "\[IndentingNewLine]", 
+    RowBox[{"\"\<Residual (L.X-B)\>\"", "\[Rule]", 
+     RowBox[{"Max", "[", 
+      RowBox[{"Abs", "[", 
+       RowBox[{
+        RowBox[{"L", ".", "X"}], "-", "B"}], "]"}], "]"}]}]}], 
+   "\[IndentingNewLine]", "]"}], "]"}]], "Input",
+ CellChangeTimes->{
+  3.7964448259948997`*^9, {3.796448314024144*^9, 3.796448315592856*^9}, {
+   3.796448528665473*^9, 3.796448687786417*^9}, {3.796448754948779*^9, 
+   3.796448762733732*^9}, {3.796450543089882*^9, 3.7964505542941093`*^9}, {
+   3.796450609374263*^9, 3.7964506865687923`*^9}, {3.7964507167226686`*^9, 
+   3.7964507203121967`*^9}},
+ CellLabel->"In[13]:=",ExpressionUUID->"2038d408-c0e0-4007-a858-2f2987bec5fc"],
+
 Cell["\<\
-This is how you can use Pardiso in conjuction with the FEM backend of \
-NDSolveValue:\
+On my machine and with Mathematica 12.0, PardisoLinks\[CloseCurlyQuote] \
+solver is slightly faster than the built-in Pardiso-solver\
 \>", "Text",
- CellChangeTimes->{{3.7963141433419333`*^9, 
-  3.796314165269917*^9}},ExpressionUUID->"d0e42329-e092-423a-9b7d-\
+ CellChangeTimes->{{3.796449985018231*^9, 
+  3.796450028920642*^9}},ExpressionUUID->"f67595c9-14dd-4972-8641-\
+78f45b36bde3"],
+
+Cell[BoxData[
+ RowBox[{"Dataset", "[", 
+  RowBox[{"Association", "[", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"\"\<Time for built-in Pardiso solver\>\"", "\[Rule]", 
+     RowBox[{"First", "@", 
+      RowBox[{"AbsoluteTiming", "[", 
+       RowBox[{
+        RowBox[{"Q", "=", 
+         RowBox[{"LinearSolve", "[", 
+          RowBox[{"L", ",", 
+           RowBox[{"Method", "\[Rule]", "\"\<Pardiso\>\""}]}], "]"}]}], ";"}],
+        "]"}]}]}], ",", "\[IndentingNewLine]", 
+    RowBox[{"\"\<Time for solving a single linear system\>\"", "\[Rule]", 
+     RowBox[{"First", "@", 
+      RowBox[{"AbsoluteTiming", "[", 
+       RowBox[{
+        RowBox[{"xLinearSolve", "=", 
+         RowBox[{"Q", "[", "b", "]"}]}], ";"}], "]"}]}]}], ",", 
+    "\[IndentingNewLine]", 
+    RowBox[{"\"\<Residual\>\"", "\[Rule]", 
+     RowBox[{"Max", "[", 
+      RowBox[{"Abs", "[", 
+       RowBox[{
+        RowBox[{"L", ".", "xLinearSolve"}], "-", "b"}], "]"}], "]"}]}]}], 
+   "\[IndentingNewLine]", "]"}], "]"}]], "Input",
+ CellChangeTimes->{{3.796449792045423*^9, 3.79644980842675*^9}, {
+  3.796449840498047*^9, 3.796449851977489*^9}, {3.796449940469805*^9, 
+  3.7964499765411654`*^9}, {3.796450569249928*^9, 3.796450572429924*^9}},
+ CellLabel->"In[14]:=",ExpressionUUID->"dcc2d676-303e-471e-8b77-63fa41ce55c6"],
+
+Cell["\<\
+We can solve also transposed systems by using an optional second argument. \
+This option is consistent with the syntax that LinearSolveFunction objects \
+that were generated with LinearSolve[L, \
+Method->\[CloseCurlyDoubleQuote]Multifrontal\[CloseCurlyDoubleQuote]]. Beware \
+that Mathematica\[CloseCurlyQuote]s built-in Pardiso-solver ignores the \
+second argument.\
+\>", "Text",
+ CellChangeTimes->{{3.7964487126999598`*^9, 3.796448750630961*^9}, {
+  3.796449433078245*^9, 3.796449501075972*^9}, {3.796450080822644*^9, 
+  3.796450106645475*^9}},ExpressionUUID->"80df40f2-c6f1-4a9e-b68b-\
+704372cec337"],
+
+Cell[BoxData[
+ RowBox[{"Dataset", "[", 
+  RowBox[{"Association", "[", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{
+    "\"\<Time for solving a single transposed system (L\[Transpose].y == b)\>\
+\"", "\[Rule]", 
+     RowBox[{"First", "@", 
+      RowBox[{"AbsoluteTiming", "[", 
+       RowBox[{
+        RowBox[{"y", "=", 
+         RowBox[{"P", "[", 
+          RowBox[{"b", ",", "\"\<T\>\""}], "]"}]}], ";"}], "]"}]}]}], ",", 
+    "\[IndentingNewLine]", 
+    RowBox[{"\"\<Residual (L\[Transpose].y - b)\>\"", "\[Rule]", 
+     RowBox[{"Max", "[", 
+      RowBox[{"Abs", "[", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"L", "\[Transpose]"}], ".", "y"}], "-", "b"}], "]"}], 
+      "]"}]}], ",", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"\"\<Time for solving \>\"", "<>", 
+      RowBox[{"IntegerString", "[", "m", "]"}], "<>", 
+      "\"\< transposed systems (L\[Transpose].Y == B)\>\""}], "\[Rule]", 
+     RowBox[{"First", "@", 
+      RowBox[{"AbsoluteTiming", "[", 
+       RowBox[{
+        RowBox[{"Y", "=", 
+         RowBox[{"P", "[", 
+          RowBox[{"B", ",", "\"\<T\>\""}], "]"}]}], ";"}], "]"}]}]}], ",", 
+    "\[IndentingNewLine]", 
+    RowBox[{"\"\<Residual (L\[Transpose].Y - B)\>\"", "\[Rule]", 
+     RowBox[{"Max", "[", 
+      RowBox[{"Abs", "[", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"L", "\[Transpose]"}], ".", "Y"}], "-", "B"}], "]"}], 
+      "]"}]}], ",", "\[IndentingNewLine]", 
+    RowBox[{
+    "\"\<Mathematica's Pardiso solver ignores second argument\>\"", "\[Rule]", 
+     RowBox[{"Max", "[", 
+      RowBox[{"Abs", "[", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"L", "\[Transpose]"}], ".", 
+         RowBox[{"Q", "[", 
+          RowBox[{"b", ",", "\"\<T\>\""}], "]"}]}], "-", "b"}], "]"}], 
+      "]"}]}]}], "\[IndentingNewLine]", "]"}], "]"}]], "Input",
+ CellChangeTimes->{{3.7964487685583153`*^9, 3.796448768752496*^9}, {
+  3.796450148956822*^9, 3.796450149142021*^9}, {3.796450200302347*^9, 
+  3.796450221282042*^9}, {3.796450784661508*^9, 3.796450830939619*^9}},
+ CellLabel->"In[15]:=",ExpressionUUID->"51b3fd7c-d11d-4aee-bfed-0788f1ffaff7"],
+
+Cell["\<\
+We can update the nonzero values of the matrix stored in the Pardiso object \
+with the method \[OpenCurlyDoubleQuote]Update\[CloseCurlyDoubleQuote]. Then \
+the symbolic factorization can be skipped.\
+\>", "Text",
+ CellChangeTimes->{{3.796448833710843*^9, 
+  3.796448889978416*^9}},ExpressionUUID->"ddd2c49d-49b8-424d-b300-\
+4d3986af6c62"],
+
+Cell[BoxData[
+ RowBox[{"Dataset", "[", 
+  RowBox[{"Association", "[", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{
+    "\"\<Time for initialization + symbolic + numeric factorization\>\"", 
+     "\[Rule]", 
+     RowBox[{"First", "@", 
+      RowBox[{"AbsoluteTiming", "[", 
+       RowBox[{
+        RowBox[{"P2", "=", 
+         RowBox[{"Pardiso", "[", 
+          RowBox[{
+           RowBox[{"-", "L"}], ",", 
+           RowBox[{"\"\<CheckMatrix\>\"", "\[Rule]", "False"}]}], "]"}]}], 
+        ";"}], "]"}]}]}], ",", "\[IndentingNewLine]", 
+    RowBox[{
+    "\"\<Time for updating + numeric factorization only\>\"", "\[Rule]", 
+     RowBox[{"First", "@", 
+      RowBox[{"AbsoluteTiming", "[", 
+       RowBox[{
+        RowBox[{"P", "[", 
+         RowBox[{"\"\<Update\>\"", "[", 
+          RowBox[{"-", "L"}], "]"}], "]"}], ";"}], "]"}]}]}], ",", 
+    "\[IndentingNewLine]", 
+    RowBox[{
+    "\"\<Time for solving a single linear system (-L.z == b)\>\"", "\[Rule]", 
+     
+     RowBox[{"First", "@", 
+      RowBox[{"AbsoluteTiming", "[", 
+       RowBox[{
+        RowBox[{"z", "=", 
+         RowBox[{"P", "[", 
+          RowBox[{"-", "b"}], "]"}]}], ";"}], "]"}]}]}], ",", 
+    "\[IndentingNewLine]", 
+    RowBox[{"\"\<Residual (-L.z - b)\>\"", "\[Rule]", 
+     RowBox[{"Max", "[", 
+      RowBox[{"Abs", "[", 
+       RowBox[{
+        RowBox[{"-", 
+         RowBox[{"L", ".", "z"}]}], "+", "b"}], "]"}], "]"}]}]}], 
+   "\[IndentingNewLine]", "]"}], "]"}]], "Input",
+ CellChangeTimes->{{3.796450223652154*^9, 3.796450223898312*^9}, {
+  3.796450851871191*^9, 3.796450892889372*^9}},
+ CellLabel->"In[16]:=",ExpressionUUID->"632d5f63-bbfe-46d8-92e5-bc6ad11c43be"],
+
+Cell["\<\
+The attentive reader might have observed that solving equations with an (n x \
+m) - matrix right on the right hand side is not necessarily as fast as \
+solving m equations sequentially. This is caused by the fact that Mathematica\
+\[CloseCurlyQuote]s matrix memory layout is row-major while the MKL Pardiso \
+expects column major. This requires transpose operations when sending matrix \
+right hand sides and retrieving solution matrices from the library. This is \
+particularly unpleasant if one simply wants to solve m equations but is \
+forced to pack the vectors as columns into a right hand side matrix as \
+enforced by the syntax of LinearSolve. This is why Pardiso objects allow an \
+optional third argument that can take the values Left and Right. Observe in \
+the following that calls with Right are faster; is is eaxctly because \
+transpositions can be skipped.\
+\>", "Text",
+ CellChangeTimes->{{3.796448347142304*^9, 3.796448501800215*^9}, {
+   3.796448942856721*^9, 3.7964490475560007`*^9}, {3.796449112185309*^9, 
+   3.79644912930615*^9}, {3.796449534043271*^9, 3.7964496612140083`*^9}, {
+   3.796450249952763*^9, 3.796450251713606*^9}, 3.796450984494627*^9, {
+   3.796451118243711*^9, 
+   3.796451119152523*^9}},ExpressionUUID->"07880b23-c473-43b0-a399-\
+a6c528ca718a"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"P", "[", 
+   RowBox[{"\"\<Update\>\"", "[", "L", "]"}], "]"}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"BT", "=", 
+    RowBox[{"Transpose", "[", "B", "]"}]}], ";"}], 
+  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+ RowBox[{"Dataset", "[", 
+  RowBox[{"Association", "[", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"\"\<Time for solving L.X == B (default)\>\"", "\[Rule]", 
+     RowBox[{"First", "@", 
+      RowBox[{"AbsoluteTiming", "[", 
+       RowBox[{
+        RowBox[{"Xdefault", "=", 
+         RowBox[{"P", "[", "B", "]"}]}], ";"}], "]"}]}]}], ",", 
+    "\[IndentingNewLine]", 
+    RowBox[{"\"\<Residual (L.X - B) (default)\>\"", "\[Rule]", 
+     RowBox[{"Max", "[", 
+      RowBox[{"Abs", "[", 
+       RowBox[{
+        RowBox[{"L", ".", "Xdefault"}], "-", "B"}], "]"}], "]"}]}], ",", 
+    "\[IndentingNewLine]", "\[IndentingNewLine]", 
+    RowBox[{"\"\<Time for solving L.X == B\>\"", "\[Rule]", 
+     RowBox[{"First", "@", 
+      RowBox[{"AbsoluteTiming", "[", 
+       RowBox[{
+        RowBox[{"X", "=", 
+         RowBox[{"P", "[", 
+          RowBox[{"B", ",", "\"\<N\>\"", ",", "Left"}], "]"}]}], ";"}], 
+       "]"}]}]}], ",", "\[IndentingNewLine]", 
+    RowBox[{"\"\<Residual (L.X - B)\>\"", "\[Rule]", 
+     RowBox[{"Max", "[", 
+      RowBox[{"Abs", "[", 
+       RowBox[{
+        RowBox[{"L", ".", "X"}], "-", "B"}], "]"}], "]"}]}], ",", 
+    "\[IndentingNewLine]", "\[IndentingNewLine]", 
+    RowBox[{"\"\<Time for solving L\[Transpose].X == B\>\"", "\[Rule]", 
+     RowBox[{"First", "@", 
+      RowBox[{"AbsoluteTiming", "[", 
+       RowBox[{
+        RowBox[{"X", "=", 
+         RowBox[{"P", "[", 
+          RowBox[{"B", ",", "\"\<T\>\"", ",", "Left"}], "]"}]}], ";"}], 
+       "]"}]}]}], ",", "\[IndentingNewLine]", 
+    RowBox[{"\"\<Residual (L\[Transpose].X - B)\>\"", "\[Rule]", 
+     RowBox[{"Max", "[", 
+      RowBox[{"Abs", "[", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"L", "\[Transpose]"}], ".", "X"}], "-", "B"}], "]"}], 
+      "]"}]}], ",", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+    RowBox[{"\"\<Time for solving X.L == B\[Transpose]\>\"", "\[Rule]", 
+     RowBox[{"First", "@", 
+      RowBox[{"AbsoluteTiming", "[", 
+       RowBox[{
+        RowBox[{"X", "=", 
+         RowBox[{"P", "[", 
+          RowBox[{"BT", ",", "\"\<N\>\"", ",", "Right"}], "]"}]}], ";"}], 
+       "]"}]}]}], ",", "\[IndentingNewLine]", 
+    RowBox[{"\"\<Residual (X.L - B\[Transpose])\>\"", "\[Rule]", 
+     RowBox[{"Max", "[", 
+      RowBox[{"Abs", "[", 
+       RowBox[{
+        RowBox[{"X", ".", "L"}], "-", "BT"}], "]"}], "]"}]}], ",", 
+    "\[IndentingNewLine]", "\[IndentingNewLine]", 
+    RowBox[{
+    "\"\<Time for solving X.L\[Transpose] == B\[Transpose]\>\"", "\[Rule]", 
+     RowBox[{"First", "@", 
+      RowBox[{"AbsoluteTiming", "[", 
+       RowBox[{
+        RowBox[{"X", "=", 
+         RowBox[{"P", "[", 
+          RowBox[{"BT", ",", "\"\<T\>\"", ",", "Right"}], "]"}]}], ";"}], 
+       "]"}]}]}], ",", "\[IndentingNewLine]", 
+    RowBox[{"\"\<Residual (X.L\[Transpose] - B\[Transpose])\>\"", "\[Rule]", 
+     RowBox[{"Max", "[", 
+      RowBox[{"Abs", "[", 
+       RowBox[{
+        RowBox[{"X", ".", 
+         RowBox[{"L", "\[Transpose]"}]}], "-", "BT"}], "]"}], "]"}]}]}], 
+   "\[IndentingNewLine]", "]"}], "]"}]}], "Input",
+ CellChangeTimes->{{3.796449076928858*^9, 3.796449078972109*^9}, {
+  3.7964502874499197`*^9, 3.796450509911394*^9}, {3.79645091099334*^9, 
+  3.796450956551608*^9}, {3.796451005429315*^9, 3.7964510080371923`*^9}},
+ CellLabel->"In[17]:=",ExpressionUUID->"9f6063c1-0aad-4401-a88c-41884bf1da80"],
+
+Cell["\<\
+Since Mathematica 12, it is also possible to tell the FEM backend of \
+NDSolveValue which linear solver to use. Here is how it can be done (of \
+course, this works only in Mathematica 12 and higher):\
+\>", "Text",
+ CellChangeTimes->{{3.7963141433419333`*^9, 3.796314165269917*^9}, {
+  3.796449697451952*^9, 
+  3.796449772954062*^9}},ExpressionUUID->"d0e42329-e092-423a-9b7d-\
 a5c87977bcc1"],
 
 Cell[BoxData[{
@@ -287,9 +576,8 @@ Cell[BoxData[{
  CellChangeTimes->{{3.796312903532475*^9, 3.796312906475409*^9}, {
   3.796313343041379*^9, 3.796313478768128*^9}, {3.796313516170455*^9, 
   3.7963135878783207`*^9}, {3.796313645396491*^9, 3.796313711400126*^9}, {
-  3.7963140095476017`*^9, 
-  3.796314010532634*^9}},ExpressionUUID->"4ebb520d-6d78-4620-8c49-\
-e781875329b5"]
+  3.7963140095476017`*^9, 3.796314010532634*^9}},
+ CellLabel->"In[20]:=",ExpressionUUID->"4ebb520d-6d78-4620-8c49-e781875329b5"]
 },
 WindowSize->{1440, 855},
 WindowMargins->{{0, Automatic}, {Automatic, 0}},
@@ -307,12 +595,22 @@ CellTagsIndex->{}
 *)
 (*NotebookFileOutline
 Notebook[{
-Cell[400, 13, 175, 2, 41, "Input",ExpressionUUID->"8eea5315-794a-4917-a221-0b180ead833e"],
-Cell[578, 17, 248, 4, 41, "Input",ExpressionUUID->"65e7fcd3-9276-4340-bd60-213c62aea5b4"],
-Cell[829, 23, 233, 6, 53, "Text",ExpressionUUID->"7b1e9092-05b0-4c95-ae42-b446f1dd7624"],
-Cell[1065, 31, 5303, 148, 542, "Input",ExpressionUUID->"9b394f4f-a3c7-42df-8d74-a287e4b091e7"],
-Cell[6371, 181, 237, 6, 53, "Text",ExpressionUUID->"d0e42329-e092-423a-9b7d-a5c87977bcc1"],
-Cell[6611, 189, 3891, 102, 567, "Input",ExpressionUUID->"4ebb520d-6d78-4620-8c49-e781875329b5"]
+Cell[400, 13, 176, 2, 41, "Input",ExpressionUUID->"8eea5315-794a-4917-a221-0b180ead833e"],
+Cell[579, 17, 248, 4, 41, "Input",ExpressionUUID->"65e7fcd3-9276-4340-bd60-213c62aea5b4"],
+Cell[830, 23, 418, 9, 88, "Text",ExpressionUUID->"588c6e73-84c3-489e-a8a7-c26d8e67d9b0"],
+Cell[1251, 34, 3870, 100, 317, "Input",ExpressionUUID->"9b394f4f-a3c7-42df-8d74-a287e4b091e7"],
+Cell[5124, 136, 171, 3, 53, "Text",ExpressionUUID->"ddb921e3-b485-4c06-97de-33ac537e8097"],
+Cell[5298, 141, 2097, 52, 242, "Input",ExpressionUUID->"2038d408-c0e0-4007-a858-2f2987bec5fc"],
+Cell[7398, 195, 282, 6, 53, "Text",ExpressionUUID->"f67595c9-14dd-4972-8641-78f45b36bde3"],
+Cell[7683, 203, 1292, 29, 142, "Input",ExpressionUUID->"dcc2d676-303e-471e-8b77-63fa41ce55c6"],
+Cell[8978, 234, 613, 11, 122, "Text",ExpressionUUID->"80df40f2-c6f1-4a9e-b68b-704372cec337"],
+Cell[9594, 247, 2103, 52, 217, "Input",ExpressionUUID->"51b3fd7c-d11d-4aee-bfed-0788f1ffaff7"],
+Cell[11700, 301, 348, 7, 88, "Text",ExpressionUUID->"ddd2c49d-49b8-424d-b300-4d3986af6c62"],
+Cell[12051, 310, 1657, 44, 192, "Input",ExpressionUUID->"632d5f63-bbfe-46d8-92e5-bc6ad11c43be"],
+Cell[13711, 356, 1293, 20, 226, "Text",ExpressionUUID->"07880b23-c473-43b0-a399-a6c528ca718a"],
+Cell[15007, 378, 3615, 88, 492, "Input",ExpressionUUID->"9f6063c1-0aad-4401-a88c-41884bf1da80"],
+Cell[18625, 468, 400, 8, 88, "Text",ExpressionUUID->"d0e42329-e092-423a-9b7d-a5c87977bcc1"],
+Cell[19028, 478, 3910, 101, 567, "Input",ExpressionUUID->"4ebb520d-6d78-4620-8c49-e781875329b5"]
 }
 ]
 *)
