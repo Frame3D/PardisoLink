@@ -388,7 +388,7 @@ Compile[{{vals,_Integer,1},{rp,_Integer,1},{ci,_Integer,1},{pat,_Integer,1}},
 );
 
 cAssembleDenseVector:=cAssembleDenseVector=(
-Print["Compiling cLookupAssemblyPositions."];
+Print["Compiling cAssembleDenseVector."];
 Compile[{{ilist,_Integer,1},{values,_Real,1},{dims,_Integer,1}},
 	Block[{v},
 		v=Table[0.,{Compile`GetElement[dims,1]}];
