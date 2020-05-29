@@ -21,6 +21,11 @@ Pardiso::usage = "";
 
 PardisoUpdate::usage = "";
 
+Assembler::usage="Assembler[pat,{m,n},background] creates a reusable AssemblyFunction that is capable of assemble SparseArray[pat->vals,{m,n},background] more efficiently than the built-in method.";
+
+AssemblyFunction::usage="An AssemblyFunction assembler = Assembler[pat,{m,n},background] allows to 
+assemble SparseArray[pat->vals,{m,n},background] more efficiently and by just evaluating assembler[vals]. The output is a SparseArray A in CRS format, i.e., SparseArray`SparseArraySortedQ[A] will evaluate to True.";
+
 $PardisoMatrixTypes = Association[1 -> {Real, "Structurally symmetric"}, 2 -> {Real, "Symmetric", "Positive definite"}, -2 -> {Real, "Symmetric", "Indefinite"}, 11 -> {Real, "Nonsymmetric"}, 3 -> {Complex, "Structurally symmetric"}, 4 -> {Complex, "Hermitian", "Positive definite"}, 6 -> {Complex, "Symmetric"}, -4 -> {Complex, "Hermitian", "Indefinite"}, 13 -> {Complex, "Nonsymmetric"}];
 
 $PardisoErrors = Association[0 -> "No error.", -1 -> "Input is inconsistent.", -2 -> "Not enough memory.", -3 -> "Reordering problem.", -4 -> "Zero pivot, numerical factorization or iterative refinement problem.", -5 -> "Unclassified (internal) error.", -6 -> "Reordering failed (matrix types 11 and 13 only).", -7 -> "Diagonal matrix is singular.", -8 -> "32-bit integer overflow problem.", -9 -> "Not enough memory for OOC.", -10 -> "Error opening OOC files.", -11 -> "Read/write error with OOC files.", -12 -> "pardiso_64 called from 32-bit library."];
@@ -317,6 +322,85 @@ Pardiso /: MakeBoxes[P_Pardiso, StandardForm] := BoxForm`ArrangeSummaryBox[
 	}, 
 	StandardForm, "Interpretable" -> False
 ] /; Function[Q, Head[Q[[1]]] === Integer][P]
+
+
+SetAttributes[AssemblyFunction,HoldAll];
+
+Assembly::expected="Values list has `2` elements. Expected are `1` elements. Returning prototype.";
+
+Assembler[pat_?MatrixQ,{m_Integer,n_Integer},background_: 0.]:=Module[{pa,c,ci,rp,pos},
+	pa=SparseArray`SparseArraySort@SparseArray[pat->_,{m,n}];
+	rp=pa["RowPointers"];
+	ci=pa["ColumnIndices"];
+	c=Length[ci];
+	pos=cLookupAssemblyPositions[Range[c],rp,Flatten[ci],pat];
+	Module[{a},
+		a=<|"Dimensions"->{m,n},"Positions"->pos,"RowPointers"->rp,"ColumnIndices"->ci,"Background"->background,"Length"->c|>;
+		AssemblyFunction@@{a}
+	]
+];
+
+AssemblyFunction/:a_AssemblyFunction[vals0_]:=Module[{len,expected,dims,u,vals},
+	If[VectorQ[vals0],vals=vals0,vals=Flatten[vals0]];
+	len=Length[vals];
+	expected=Length[a[[1]][["Positions"]]];
+	dims=a[[1]][["Dimensions"]];
+	If[
+		len===expected
+	,
+		If[
+			Length[dims]==1
+		,
+			u=ConstantArray[0.,dims[[1]]];
+			u[[a[[1]][["ColumnIndices"]]]]=cAssembleDenseVector[a[[1]][["Positions"]],vals,{a[[1]][["Length"]]}];
+			u
+		,
+			SparseArray@@{Automatic,dims,a[[1]][["Background"]],
+				{
+					1,
+					{a[[1]][["RowPointers"]],a[[1]][["ColumnIndices"]]},
+					cAssembleDenseVector[a[[1]][["Positions"]], vals,{a[[1]][["Length"]]}]
+				}
+			}
+		]
+	,
+		Message[Assembly::expected,expected,len];
+		Abort[]
+	]
+];
+
+ClearAll[cLookupAssemblyPositions];
+cLookupAssemblyPositions:=cLookupAssemblyPositions=(
+Print["Compiling cLookupAssemblyPositions."];
+Compile[{{vals,_Integer,1},{rp,_Integer,1},{ci,_Integer,1},{pat,_Integer,1}},
+	Block[{k,c,i,j},i=Compile`GetElement[pat,1];
+		j=Compile`GetElement[pat,2];
+		k=Compile`GetElement[rp,i]+1;
+		c=Compile`GetElement[rp,i+1];
+		While[k<c+1&&Compile`GetElement[ci,k]!=j,++k];
+		Compile`GetElement[vals,k]
+	],
+	RuntimeAttributes->{Listable},
+	Parallelization->True,
+	CompilationTarget->"C",
+	RuntimeOptions->"Speed"
+]
+);
+
+cAssembleDenseVector:=cAssembleDenseVector=(
+Print["Compiling cLookupAssemblyPositions."];
+Compile[{{ilist,_Integer,1},{values,_Real,1},{dims,_Integer,1}},
+	Block[{v},
+		v=Table[0.,{Compile`GetElement[dims,1]}];
+		Do[
+			v[[Compile`GetElement[ilist,i]]]+=Compile`GetElement[values,i]
+		,{i,1,Length[values]}];
+		v
+	],
+	CompilationTarget->"C",
+	RuntimeOptions->"Speed"
+]
+);
 
 
 End[];
