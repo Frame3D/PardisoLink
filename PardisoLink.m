@@ -43,7 +43,6 @@ ConfigureLTemplate[
 ];
 
 LClassContext[] ="PardisoLink`";
-Off[PardisoLink`LTemplate`LTemplate::nofun];
 
 
 Begin["`Private`"];
@@ -401,6 +400,12 @@ Compile[{{ilist,_Integer,1},{values,_Real,1},{dims,_Integer,1}},
 	RuntimeOptions->"Speed"
 ]
 );
+
+
+Quiet[
+Pardiso[id$_Integer][f$_String[___]]/;(Message[LTemplate::nofun,StringTemplate["``::``"][Pardiso,f$]];False)=.;
+Pardiso[id$_Integer][f$_String[___]]/;(Message[LTemplate::nofun,StringTemplate["``::``"][Pardiso,f$]];False):=$Failed;
+];
 
 
 End[];
